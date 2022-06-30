@@ -22,8 +22,6 @@
     "react-native-image-crop-picker": "^0.38.0",
     "react-native-safe-area-context": "^4.3.1",
     "react-native-web": "0.17.7",
-    "stream-chat": "^6.7.2",
-    "stream-chat-react-native": "^4.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
