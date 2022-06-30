@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Text, View} from 'react-native';
+import {Button, Text, View} from 'react-native';
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
-      <Text>Homescreen</Text>
+      <Button title="Chat" onPress={() => navigation.navigate('Chat')}/>
     </View>
   );
 }
