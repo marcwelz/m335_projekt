@@ -4,28 +4,60 @@ import {
     View,
     StyleSheet,
     TouchableOpacity,
-    Image,
     Text,
     ScrollView,
     KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Button, Platform
 } from 'react-native';
 import ChatBubble from "./static/ChatBubble";
-import {useState} from "react";
 import * as ImagePicker from 'expo-image-picker';
+import {useState, useEffect} from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-export default function Chat() {
+export default function Chat({route}) {
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState("")
     const [inputClicked, setInputClicked] = useState(false)
     const [image, setImage] = useState(null);
 
+    useEffect(() => {
+        getData()
+    }, [])
+
+    const getData = async () => {
+        try {
+          const value = await AsyncStorage.getItem('@' + route.params.key)
+          const parsedValue = JSON.parse(value)
+          
+          if(parsedValue !== null) setMessages(parsedValue)
+        } catch(e) {
+          console.error(e)
+        }
+      }
+
+      const storeDataStart = async () => {
+        try {
+          await AsyncStorage.setItem('@'+route.params.key, JSON.stringify(messages))
+        } catch (e) {
+          console.error(e)
+        }
+      }
+
     function handleSendMessage() {
         if (currentMessage !== "") {
-            setMessages([...messages, currentMessage])
-            setCurrentMessage("")
+            const tmpObj = {
+                "writer": true,
+                "message": currentMessage
+            }
+            setMessages([...messages, tmpObj])
         }
     }
+
+useEffect(() => {
+        if(currentMessage !== "") {
+            setCurrentMessage("")
+            storeDataStart()
+        }
+    }, [messages])
 
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
@@ -51,9 +83,9 @@ export default function Chat() {
             style={styles.chatContainer}
         >
             <ScrollView styles={styles.chatContainerBubbles}>
-                {messages.map(message =>
-                    <ChatBubble message={message} writer></ChatBubble>
-                )}
+                {messages ? messages.map(message =>
+                    <ChatBubble message={message.message} writer={message.writer}></ChatBubble>
+                ): <Text>messages loading...</Text>}
             </ScrollView>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={styles.chatInput}>
                 <View
