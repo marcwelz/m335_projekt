@@ -11,12 +11,11 @@ import {
 } from 'react-native';
 import ChatBubble from "./static/ChatBubble";
 import {useState} from "react";
-import { flingGestureHandlerProps } from 'react-native-gesture-handler/lib/typescript/handlers/FlingGestureHandler';
 
 export default function Chat() {
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState("")
-    const [inputClicked, setInputClicked] = useState(flingGestureHandlerProps)
+    const [inputClicked, setInputClicked] = useState(false)
 
     function handleSendMessage() {
         if (currentMessage !== "") {
