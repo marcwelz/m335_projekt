@@ -11,11 +11,14 @@ import {
 } from 'react-native';
 import ChatBubble from "./static/ChatBubble";
 import {useState} from "react";
+import * as ImagePicker from 'expo-image-picker';
+
 
 export default function Chat() {
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState("")
     const [inputClicked, setInputClicked] = useState(false)
+    const [image, setImage] = useState(null);
 
     function handleSendMessage() {
         if (currentMessage !== "") {
@@ -23,6 +26,24 @@ export default function Chat() {
             setCurrentMessage("")
         }
     }
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.cancelled) {
+            setImage(result.uri);
+        }
+
+
+    };
 
     return (
         <KeyboardAvoidingView
@@ -35,7 +56,8 @@ export default function Chat() {
                 )}
             </ScrollView>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={styles.chatInput}>
-                <View style={[styles.chatContainerInput, inputClicked ? styles.chatContainerInputClicked : styles.chatContainerInput]}>
+                <View
+                    style={[styles.chatContainerInput, inputClicked ? styles.chatContainerInputClicked : styles.chatContainerInput]}>
                     <TextInput
                         style={styles.input}
                         placeholder='Type something...'
@@ -45,6 +67,9 @@ export default function Chat() {
                         onEndEditing={() => setInputClicked(false)}
                     >
                     </TextInput>
+                    <TouchableOpacity style={styles.camera} onPress={pickImage}>
+                        <Text style={styles.buttonText}>cam</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity style={styles.button} onPress={handleSendMessage}>
                         <Text style={styles.buttonText}>send</Text>
                     </TouchableOpacity>
@@ -69,7 +94,6 @@ const styles = StyleSheet.create({
         flexBasis: "auto",
     },
     chatInput: {
-
         maxWidth: "100%",
         flexGrow: 5,
     },
@@ -83,15 +107,24 @@ const styles = StyleSheet.create({
     },
     input: {
         margin: 12,
-        width: "60%",
+        width: "50%",
         borderWidth: 1,
         borderRadius: 15,
         padding: 10,
         flexGrow: 1,
         flexShrink: false,
-        //flexGrow: 6,
+    },
+    camera: {
+        width: "10%",
+        margin: 12,
+        height: 40,
+        backgroundColor: '#2196F3',
+        borderRadius: 15,
+        flexGrow: 1,
+        flexShrink: 1,
     },
     button: {
+        width: "10%",
         margin: 12,
         height: 40,
         backgroundColor: '#2196F3',
