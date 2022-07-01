@@ -44,8 +44,6 @@ export default function Chat() {
                         placeholder='Type something...'
                         value={currentMessage}
                         onChangeText={setCurrentMessage}
-                        onPressIn={setInputClicked(true)}
-                        onPressOut={setInputClicked(false)}
                     >
                     </TextInput>
                     <TouchableOpacity style={styles.button} onPress={handleSendMessage}>
