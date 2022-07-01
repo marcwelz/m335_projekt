@@ -11,12 +11,12 @@ import {
 } from 'react-native';
 import ChatBubble from "./static/ChatBubble";
 import {useState} from "react";
+import { flingGestureHandlerProps } from 'react-native-gesture-handler/lib/typescript/handlers/FlingGestureHandler';
 
 export default function Chat() {
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState("")
-    const [inputClicked, setInputClicked] = useState(false)
-
+    const [inputClicked, setInputClicked] = useState(flingGestureHandlerProps)
 
     function handleSendMessage() {
         if (currentMessage !== "") {
@@ -25,9 +25,7 @@ export default function Chat() {
         }
     }
 
-
     return (
-
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.chatContainer}
@@ -44,6 +42,8 @@ export default function Chat() {
                         placeholder='Type something...'
                         value={currentMessage}
                         onChangeText={setCurrentMessage}
+                        onPressIn={() => setInputClicked(true)}
+                        onEndEditing={() => setInputClicked(false)}
                     >
                     </TextInput>
                     <TouchableOpacity style={styles.button} onPress={handleSendMessage}>
