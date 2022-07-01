@@ -2,6 +2,7 @@ import * as React from 'react';
 import {useState, useEffect} from "react";
 import {Text, StyleSheet, View, TouchableOpacity, Button, Modal} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ChatListComponent from './static/ChatListComponent';
 
 export default function HomeScreen({navigation}) {
@@ -10,20 +11,71 @@ export default function HomeScreen({navigation}) {
   const [contactName, setContactName] = useState(null)
 
   useEffect(() => {
+    console.log("loadmESSAGES")
     setContacts(tmpData)
+    loadMessages()
   }, [])
 
   function handleSubmit() {
     if(contactName !== "") {
       const tmpObj = {
         "name": contactName,
-        "latestText": "null"
+        "latestText": "*neuer Kontakt*"
       }
 
       setContacts([...contacts, tmpObj])
       setContactName("")
       setModalStatus(false)
     }
+  }
+
+  const storeDataStart = async (key, tmpData) => {
+    try {
+      await AsyncStorage.setItem('@' + key, JSON.stringify(tmpData))
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  function loadMessages() {
+    const tmpObjLiam = [
+        {
+          "writer": false,
+          "message": "hallo Marc!"
+        },
+        {
+          "writer": true,
+          "message": "hey"
+        },
+        {
+          "writer": true,
+          "message": "was geht ab"
+        },
+        {
+          "writer": false,
+          "message": "nix bei dir"
+        },
+        {
+          "writer": false,
+          "message": "kommst du raus?"
+        },
+      ]
+    const tmpObjMarc = [
+        {
+          "writer": false,
+          "message": "Ey"
+        },
+        {
+          "writer": false,
+          "message": "Was soll die Scheisse"
+        },
+        {
+          "writer": false,
+          "message": "Ich ha doch numme welle nett sii :("
+        }
+      ]
+    storeDataStart("Liam", tmpObjLiam)
+    storeDataStart("Marc", tmpObjMarc)
   }
 
   return (
@@ -55,7 +107,7 @@ export default function HomeScreen({navigation}) {
       {contacts ? contacts.map(contact =>
         <TouchableOpacity
           style={styles.touchLink}
-          onPress={() => navigation.navigate('Chat')}
+          onPress={() => navigation.navigate('Chat', {key: contact.name})}
         >
           <ChatListComponent contact={contact.name} latestText={contact.latestText}></ChatListComponent>
         </TouchableOpacity>
@@ -100,11 +152,11 @@ const styles = StyleSheet.create({
 
 const tmpData = [
   {
-    "name": "Marc Welz",
-    "latestText": "Chunsch huette no?"
+    "name": "Marc",
+    "latestText": "Ich ha doch numme welle nett sii :("
   },
   {
-    "name": "Liam Simfick",
-    "latestText": "niemrt mag dich"
+    "name": "Liam",
+    "latestText": "kommst du raus?"
   }
 ]
