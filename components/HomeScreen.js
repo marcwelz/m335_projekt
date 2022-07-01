@@ -1,22 +1,25 @@
 import * as React from 'react';
-import {Button, StyleSheet, View, TouchableOpacity} from 'react-native';
+import {useState, useEffect} from "react";
+import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
 import ChatListComponent from './static/ChatListComponent';
 
 export default function HomeScreen({navigation}) {
+  const [contacts, setContacts] = useState() 
+
+  useEffect(() => {
+    setContacts(tmpData)
+  }, [])
+
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
-      <TouchableOpacity
-        style={styles.touchLink}
-        onPress={() => navigation.navigate('Chat')}
+      {contacts ? contacts.map(contact =>
+        <TouchableOpacity
+          style={styles.touchLink}
+          onPress={() => navigation.navigate('Chat')}
         >
-        <ChatListComponent onPress={() => navigation.navigate('Chat')} contact="Marc Welz" latestText="Chunsch huette no?"></ChatListComponent>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.touchLink}
-        onPress={() => navigation.navigate('Chat')}
-        >
-        <ChatListComponent contact="Liam Simfick" latestText="Niemrt mag dich"></ChatListComponent>
-      </TouchableOpacity>
+          <ChatListComponent contact={contact.name} latestText={contact.latestText}></ChatListComponent>
+        </TouchableOpacity>
+      ) : <Text>Contacts not loaded yet</Text>}
     </View>
   );
 }
@@ -27,3 +30,14 @@ const styles = StyleSheet.create({
     width: "100%"
   }
 })
+
+const tmpData = [
+  {
+    "name": "Marc Welz",
+    "latestText": "Chunsch huette no?"
+  },
+  {
+    "name": "Liam Simfick",
+    "latestText": "niemrt mag dich"
+  }
+]
